@@ -1,12 +1,9 @@
-package org.jamieallen.effectiveakka
-
-package extrafinal
+package org.jamieallen.effectiveakka.extrafinal
 
 import java.util.concurrent.TimeoutException
-import scala.concurrent.{ExecutionContext, Promise}
+import scala.concurrent.{ ExecutionContext, Promise }
 import scala.concurrent.duration._
 import akka.actor._
-import scala.math.BigDecimal.int2bigDecimal
 
 case class GetCustomerAccountBalances(id: Long)
 case class AccountBalances(

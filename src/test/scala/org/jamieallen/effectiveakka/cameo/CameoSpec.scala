@@ -1,4 +1,4 @@
-package org.jamieallen.effectiveakka.extrafinal
+package org.jamieallen.effectiveakka.cameo
 
 import akka.testkit.{ TestKit, ImplicitSender }
 import akka.actor.{ ActorSystem, Props }
@@ -10,7 +10,7 @@ import scala.concurrent.Promise
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class ExtraFinalSpec extends TestKit(ActorSystem()) with ImplicitSender with WordSpec with MustMatchers {
+class CameoSpec extends TestKit(ActorSystem()) with ImplicitSender with WordSpec with MustMatchers {
   "An AccountBalanceRetriever" should {
     "return a list of account balances" in {
       val savingsAccountProxy = system.actorOf(Props[SavingsAccountProxy])
