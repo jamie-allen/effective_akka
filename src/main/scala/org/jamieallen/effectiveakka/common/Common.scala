@@ -29,6 +29,6 @@ class CheckingAccountProxy extends Actor {
 class MoneyMarketAccountsProxy extends Actor {
   def receive = {
     case GetCustomerAccountBalances(id: Long) =>
-      sender ! MoneyMarketAccountBalances(None)
+      sender ! MoneyMarketAccountBalances(Some(List()))
   }
 }

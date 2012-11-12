@@ -6,7 +6,8 @@ import org.junit.runner.RunWith
 import akka.testkit.TestProbe
 import org.scalatest.WordSpec
 import org.scalatest.matchers.MustMatchers
-import scala.concurrent.Promise
+import scala.concurrent.{ Await, Promise }
+import scala.concurrent.duration._
 import org.scalatest.junit.JUnitRunner
 import org.jamieallen.effectiveakka.common._
 
@@ -21,7 +22,9 @@ class CameoSpec extends TestKit(ActorSystem()) with ImplicitSender with WordSpec
 
       val accountBalanceRetriever = system.actorOf(Props(new AccountBalanceRetriever(savingsAccountProxy, checkingAccountProxy, moneyMarketAccountProxy)))
       accountBalanceRetriever.tell(GetCustomerAccountBalances(1L), probe.ref)
-      probe.expectMsgType[Promise[AccountBalances]]
+      val promise = probe.expectMsgType[Promise[AccountBalances]]
+      val result = Await.result(promise.future, 2 seconds)
+      result must equal(AccountBalances(Some(List((3, 15000))), Some(List((1, 150000), (2, 29000))), Some(List())))
     }
   }
 }
