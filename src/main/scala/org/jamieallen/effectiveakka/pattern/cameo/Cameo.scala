@@ -1,41 +1,11 @@
-package org.jamieallen.effectiveakka.cameo
+package org.jamieallen.effectiveakka.pattern.cameo
 
 import java.util.concurrent.TimeoutException
 import scala.concurrent.{ ExecutionContext, Promise }
 import scala.concurrent.duration._
 import akka.actor._
 import scala.math.BigDecimal.int2bigDecimal
-
-case class GetCustomerAccountBalances(id: Long)
-case class AccountBalances(
-  val checking: Option[List[(Long, BigDecimal)]],
-  val savings: Option[List[(Long, BigDecimal)]],
-  val moneyMarket: Option[List[(Long, BigDecimal)]])
-case class CheckingAccountBalances(
-  val balances: Option[List[(Long, BigDecimal)]])
-case class SavingsAccountBalances(
-  val balances: Option[List[(Long, BigDecimal)]])
-case class MoneyMarketAccountBalances(
-  val balances: Option[List[(Long, BigDecimal)]])
-
-class SavingsAccountProxy extends Actor {
-  def receive = {
-    case GetCustomerAccountBalances(id: Long) =>
-      sender ! SavingsAccountBalances(Some(List((1, 150000), (2, 29000))))
-  }
-}
-class CheckingAccountProxy extends Actor {
-  def receive = {
-    case GetCustomerAccountBalances(id: Long) =>
-      sender ! CheckingAccountBalances(Some(List((3, 15000))))
-  }
-}
-class MoneyMarketAccountsProxy extends Actor {
-  def receive = {
-    case GetCustomerAccountBalances(id: Long) =>
-      sender ! MoneyMarketAccountBalances(None)
-  }
-}
+import org.jamieallen.effectiveakka.common._
 
 class AccountBalanceResponseHandler(savingsAccounts: ActorRef, checkingAccounts: ActorRef,
   moneyMarketAccounts: ActorRef, originalSender: ActorRef) extends Actor {
