@@ -4,15 +4,15 @@ import akka.actor.Actor
 
 case class GetCustomerAccountBalances(id: Long)
 case class AccountBalances(
-  val checking: Option[List[(Long, BigDecimal)]],
-  val savings: Option[List[(Long, BigDecimal)]],
-  val moneyMarket: Option[List[(Long, BigDecimal)]])
+  checking: Option[List[(Long, BigDecimal)]],
+  savings: Option[List[(Long, BigDecimal)]],
+  moneyMarket: Option[List[(Long, BigDecimal)]])
 case class CheckingAccountBalances(
-  val balances: Option[List[(Long, BigDecimal)]])
+  balances: Option[List[(Long, BigDecimal)]])
 case class SavingsAccountBalances(
-  val balances: Option[List[(Long, BigDecimal)]])
+  balances: Option[List[(Long, BigDecimal)]])
 case class MoneyMarketAccountBalances(
-  val balances: Option[List[(Long, BigDecimal)]])
+  balances: Option[List[(Long, BigDecimal)]])
 
 class SavingsAccountProxy extends Actor {
   def receive = {

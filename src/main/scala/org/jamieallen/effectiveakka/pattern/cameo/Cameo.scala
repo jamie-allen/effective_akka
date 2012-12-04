@@ -33,7 +33,7 @@ class AccountBalanceResponseHandler(savingsAccounts: ActorRef, checkingAccounts:
 
   implicit val ec: ExecutionContext = context.dispatcher
   def sendResults = {
-    originalSender ! ((promisedResult.future.map(x => x)) recover { case t: TimeoutException => t })
+    originalSender ! promisedResult.future
     context.system.stop(self)
   }
 

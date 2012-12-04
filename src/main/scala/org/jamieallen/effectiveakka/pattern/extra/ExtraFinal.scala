@@ -29,14 +29,11 @@ class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: 
 
         def collectBalances = (checkingBalances, savingsBalances, mmBalances) match {
           case (Some(c), Some(s), Some(m)) =>
-            if (promisedResult.trySuccess(AccountBalances(checkingBalances, savingsBalances, mmBalances)))
-              sendResults
+            if (promisedResult.trySuccess(AccountBalances(checkingBalances, savingsBalances, mmBalances))) {
+            	originalSender ! promisedResult.future
+              context.system.stop(self)
+            }
           case _ =>
-        }
-
-        def sendResults = {
-          originalSender ! ((promisedResult.future.map(x => x)) recover { case t: TimeoutException => t })
-          context.system.stop(self)
         }
 
         savingsAccounts ! GetCustomerAccountBalances(id)
@@ -44,7 +41,7 @@ class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: 
         moneyMarketAccounts ! GetCustomerAccountBalances(id)
         context.system.scheduler.scheduleOnce(250 milliseconds) {
           if (promisedResult.tryFailure(new TimeoutException))
-            sendResults
+          	originalSender ! promisedResult.future
         }
       }))
     }
