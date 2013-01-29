@@ -1,4 +1,4 @@
-scalaVersion := "2.10.0-RC5"
+scalaVersion := "2.10.0"
 
 name := "Effective Akka"
 
@@ -12,10 +12,10 @@ resolvers ++= Seq("akka-snapshots" at "http://repo.akka.io/snapshots",
 credentials += Credentials(Path.userHome / "atmos.credentials")
 
 libraryDependencies ++= Seq(
-//				  "com.typesafe.atmos" % "atmos-akka-actor_2.10.0-RC1" % "2.1.0-RC1",
-				  "com.typesafe.akka" % "akka-actor_2.10.0-RC1" % "2.1.0-RC1",
-          "com.typesafe.akka" % "akka-testkit_2.10.0-RC1" % "2.1.0-RC1" % "test",
-          "org.scalatest" % "scalatest_2.10.0-RC1" % "1.8-2.10.0-RC1-B1",
+//				  "com.typesafe.atmos" % "atmos-akka-actor_2.10.0" % "2.1.0",
+          "com.typesafe.akka" % "akka-actor_2.10" % "2.1.0",
+          "com.typesafe.akka" % "akka-testkit_2.10" % "2.1.0" % "test",
+          "org.scalatest" % "scalatest_2.10" % "1.9.1",
           "junit" % "junit" % "4.7" % "test"
 				  )
 
