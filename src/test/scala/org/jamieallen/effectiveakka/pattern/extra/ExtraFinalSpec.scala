@@ -12,7 +12,7 @@ import org.scalatest.junit.JUnitRunner
 import org.jamieallen.effectiveakka.common._
 
 @RunWith(classOf[JUnitRunner])
-class ExtraFinalSpec extends TestKit(ActorSystem()) with ImplicitSender with WordSpec with MustMatchers {
+class ExtraFinalSpec extends TestKit(ActorSystem("TestAS")) with ImplicitSender with WordSpec with MustMatchers {
   "An AccountBalanceRetriever" should {
     "return a list of account balances" in {
       val savingsAccountProxy = system.actorOf(Props[SavingsAccountProxy])

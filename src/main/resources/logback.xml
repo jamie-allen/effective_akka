@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="5 seconds">
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%date{ISO8601} %-5level %logger{36} %X{sourceThread} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>effective_akka.log</file>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>/tmp/tests.%i.log</fileNamePattern>
+    	<minIndex>1</minIndex>
+    	<maxIndex>10</maxIndex>
+  	</rollingPolicy>
+
+  	<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+    	<maxFileSize>5MB</maxFileSize>
+  	</triggeringPolicy>
+  	<encoder>
+    	<pattern>%date{ISO8601} %-5level %logger{36} %X{sourceThread} - %msg%n</pattern>
+  	</encoder>
+	</appender>
+
+	<logger name = "akka.actor" level = "DEBUG" >
+  	<appender-ref ref = "FILE" />
+  	<appender-ref ref = "STDOUT" />
+	</logger>
+
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>  
+
+
