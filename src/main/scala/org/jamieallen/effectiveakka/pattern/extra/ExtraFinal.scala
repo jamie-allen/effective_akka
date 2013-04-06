@@ -4,8 +4,8 @@ import java.util.concurrent.TimeoutException
 import scala.concurrent.{ ExecutionContext, Promise }
 import scala.concurrent.duration._
 import org.jamieallen.effectiveakka.common._
-import akka.actor.{ Actor, ActorRef, Props }
-import akka.actor.ActorLogging
+import akka.actor.{ Actor, ActorRef, Props, ActorLogging }
+import akka.event.LoggingReceive
 
 class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: ActorRef, moneyMarketAccounts: ActorRef) extends Actor with ActorLogging {
   def receive = {
@@ -17,7 +17,7 @@ class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: 
       context.actorOf(Props(new Actor() {
         val promisedResult = Promise[AccountBalances]()
         var checkingBalances, savingsBalances, mmBalances: Option[List[(Long, BigDecimal)]] = None
-        def receive = {
+        def receive = LoggingReceive {
           case CheckingAccountBalances(balances) =>
             log.debug(s"Received checking account balances: $balances")
             checkingBalances = balances
