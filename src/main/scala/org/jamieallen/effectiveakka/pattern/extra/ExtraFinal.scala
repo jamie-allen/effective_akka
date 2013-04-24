@@ -35,27 +35,29 @@ class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: 
         def collectBalances = (checkingBalances, savingsBalances, mmBalances) match {
           case (Some(c), Some(s), Some(m)) =>
             log.debug(s"Values received for all three account types")
-            if (promisedResult.trySuccess(AccountBalances(checkingBalances, savingsBalances, mmBalances))) {
-              log.debug(s"Sending balances back to original sender")
-              originalSender ! promisedResult.future
-              log.debug(s"Stopping context capturing actor")
-              context.system.stop(self)
-            }
+            if (promisedResult.trySuccess(AccountBalances(checkingBalances, savingsBalances, mmBalances)))
+              sendResponseAndShutdown
           case _ =>
+        }
+
+        def sendResponseAndShutdown = {
+          log.debug(s"Sending timeout failure back to original sender")
+          originalSender ! promisedResult.future
+          log.debug(s"Stopping context capturing actor")
+          context.system.stop(self)
         }
 
         savingsAccounts ! GetCustomerAccountBalances(id)
         checkingAccounts ! GetCustomerAccountBalances(id)
         moneyMarketAccounts ! GetCustomerAccountBalances(id)
         context.system.scheduler.scheduleOnce(250 milliseconds) {
-          if (promisedResult.tryFailure(new TimeoutException)) {
-            log.debug(s"Sending timeout failure back to original sender")
-            originalSender ! promisedResult.future
-            log.debug(s"Stopping context capturing actor")
-            context.system.stop(self)
-          }
+          if (promisedResult.tryFailure(new TimeoutException))
+            sendResponseAndShutdown
         }
       }))
+
+      log.debug("REMOVING MY BEHAVIOR!")
+      context.become(Actor.emptyBehavior, true)
     }
   }
 }
