@@ -8,7 +8,7 @@ import scala.math.BigDecimal.int2bigDecimal
 import org.jamieallen.effectiveakka.common._
 
 class AccountBalanceResponseHandler(savingsAccounts: ActorRef, checkingAccounts: ActorRef,
-  moneyMarketAccounts: ActorRef, originalSender: ActorRef) extends Actor {
+  moneyMarketAccounts: ActorRef, originalSender: ActorRef) extends Actor with ActorLogging {
 
   val promisedResult = Promise[AccountBalances]()
   var checkingBalances, savingsBalances, mmBalances: Option[List[(Long, BigDecimal)]] = None
@@ -26,20 +26,23 @@ class AccountBalanceResponseHandler(savingsAccounts: ActorRef, checkingAccounts:
 
   def collectBalances = (checkingBalances, savingsBalances, mmBalances) match {
     case (Some(c), Some(s), Some(m)) =>
+      log.debug(s"Values received for all three account types")
       if (promisedResult.trySuccess(AccountBalances(checkingBalances, savingsBalances, mmBalances)))
-        sendResults
+        sendResponseAndShutdown
     case _ =>
   }
 
-  implicit val ec: ExecutionContext = context.dispatcher
-  def sendResults = {
+  def sendResponseAndShutdown = {
+    log.debug(s"Sending timeout failure back to original sender")
     originalSender ! promisedResult.future
+    log.debug(s"Stopping context capturing actor")
     context.system.stop(self)
   }
 
+  import context.dispatcher
   context.system.scheduler.scheduleOnce(250 milliseconds) {
     if (promisedResult.tryFailure(new TimeoutException))
-      sendResults
+      sendResponseAndShutdown
   }
 }
 

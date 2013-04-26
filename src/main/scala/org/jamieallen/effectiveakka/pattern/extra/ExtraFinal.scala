@@ -12,7 +12,6 @@ class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: 
     case GetCustomerAccountBalances(id) => {
       log.debug(s"Received GetCustomerAccountBalances for ID: $id from $sender")
       val originalSender = sender
-      implicit val ec: ExecutionContext = context.dispatcher
 
       context.actorOf(Props(new Actor() {
         val promisedResult = Promise[AccountBalances]()
@@ -50,14 +49,15 @@ class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: 
         savingsAccounts ! GetCustomerAccountBalances(id)
         checkingAccounts ! GetCustomerAccountBalances(id)
         moneyMarketAccounts ! GetCustomerAccountBalances(id)
+        
+        import context.dispatcher
         context.system.scheduler.scheduleOnce(250 milliseconds) {
           if (promisedResult.tryFailure(new TimeoutException))
             sendResponseAndShutdown
         }
       }))
 
-      log.debug("REMOVING MY BEHAVIOR!")
-      context.become(Actor.emptyBehavior, true)
+//      context.become(Actor.emptyBehavior, true)
     }
   }
 }
