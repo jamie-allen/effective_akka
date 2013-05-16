@@ -33,6 +33,8 @@ class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: 
             log.debug(s"Received money market account balances: $balances")
             mmBalances = balances
             collectBalances
+          case AccountRetrievalTimeout =>
+            sendResponseAndShutdown(AccountRetrievalTimeout)
         }
 
         def collectBalances = (checkingBalances, savingsBalances, mmBalances) match {
@@ -55,7 +57,7 @@ class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: 
 
         import context.dispatcher
         val timeoutMessager = context.system.scheduler.scheduleOnce(250 milliseconds) {
-          sendResponseAndShutdown(AccountRetrievalTimeout)
+          self ! AccountRetrievalTimeout
         }
       }))
     }

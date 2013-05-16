@@ -30,23 +30,26 @@ class AccountBalanceResponseHandler(savingsAccounts: ActorRef, checkingAccounts:
       collectBalances
     case AccountRetrievalTimeout =>
       log.debug("Timeout occurred")
+      sendResponseAndShutdown(AccountRetrievalTimeout)
   }
 
   def collectBalances = (checkingBalances, savingsBalances, mmBalances) match {
     case (Some(c), Some(s), Some(m)) =>
       log.debug(s"Values received for all three account types")
       timeoutMessager.cancel
-      originalSender ! AccountBalances(checkingBalances, savingsBalances, mmBalances)
-      log.debug(s"Stopping context capturing actor")
-      context.stop(self)
+      sendResponseAndShutdown(AccountBalances(checkingBalances, savingsBalances, mmBalances))
     case _ =>
+  }
+
+  def sendResponseAndShutdown(response: Any) = {
+    originalSender ! response
+    log.debug("Stopping context capturing actor")
+    context.stop(self)
   }
 
   import context.dispatcher
   val timeoutMessager = context.system.scheduler.scheduleOnce(250 milliseconds) {
-    originalSender ! AccountRetrievalTimeout
-    log.debug(s"Stopping context capturing actor")
-    context.stop(self)
+    self ! AccountRetrievalTimeout
   }
 }
 

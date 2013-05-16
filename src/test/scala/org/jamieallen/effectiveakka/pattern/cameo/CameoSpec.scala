@@ -1,14 +1,11 @@
 package org.jamieallen.effectiveakka.pattern.cameo
 
 import akka.testkit.{ TestKit, TestProbe, ImplicitSender }
-import akka.actor.{ ActorSystem, Props }
+import akka.actor.{ Actor, ActorLogging, ActorSystem, Props }
 import org.scalatest.WordSpecLike
 import org.scalatest.matchers.MustMatchers
-import scala.concurrent.{ Await, Promise }
 import scala.concurrent.duration._
 import org.jamieallen.effectiveakka.common._
-import akka.actor.Actor
-import akka.actor.ActorLogging
 
 class CameoSpec extends TestKit(ActorSystem()) with ImplicitSender with WordSpecLike with MustMatchers {
   "An AccountBalanceRetriever" should {
