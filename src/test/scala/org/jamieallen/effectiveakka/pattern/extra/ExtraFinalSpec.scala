@@ -22,7 +22,6 @@ class ExtraFinalSpec extends TestKit(ActorSystem("TestAS")) with ImplicitSender 
     }
 
     "return a TimeoutException when timeout is exceeded" in {
-      // Write a local stub to inject that will cause a timeout to occur
       val savingsAccountProxy = system.actorOf(Props(new Actor() with ActorLogging {
         def receive = {
           case GetCustomerAccountBalances(id: Long) =>
@@ -36,9 +35,7 @@ class ExtraFinalSpec extends TestKit(ActorSystem("TestAS")) with ImplicitSender 
 
       val accountBalanceRetriever = system.actorOf(Props(new AccountBalanceRetrieverFinal(savingsAccountProxy, checkingAccountProxy, moneyMarketAccountProxy)))
       accountBalanceRetriever.tell(GetCustomerAccountBalances(1L), probe.ref)
-      probe.expectMsgType[String]
-
-      //      probe.expectMsgType[AccountBalanceRetrieverFinal.AccountRetrievalTimeout]
+      probe.expectMsgType[AccountBalanceRetrieverFinal.AccountRetrievalTimeout.type]
     }
   }
 }

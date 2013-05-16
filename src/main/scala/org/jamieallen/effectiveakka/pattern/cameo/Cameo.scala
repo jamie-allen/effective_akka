@@ -1,11 +1,9 @@
 package org.jamieallen.effectiveakka.pattern.cameo
 
-import java.util.concurrent.TimeoutException
-import scala.concurrent.{ ExecutionContext, Promise }
+import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-import akka.actor._
-import scala.math.BigDecimal.int2bigDecimal
 import org.jamieallen.effectiveakka.common._
+import akka.actor._
 import akka.event.LoggingReceive
 
 object AccountBalanceResponseHandler {

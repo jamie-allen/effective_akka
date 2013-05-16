@@ -39,9 +39,7 @@ class CameoSpec extends TestKit(ActorSystem()) with ImplicitSender with WordSpec
 
       val accountBalanceRetriever = system.actorOf(Props(new AccountBalanceRetriever(savingsAccountProxy, checkingAccountProxy, moneyMarketAccountProxy)))
       accountBalanceRetriever.tell(GetCustomerAccountBalances(1L), probe.ref)
-      probe.expectMsgType[String]
-
-      //      probe.expectMsg[AccountBalanceResponseHandler.AccountRetrievalTimeout]
+      probe.expectMsgType[AccountBalanceResponseHandler.AccountRetrievalTimeout.type]
     }
   }
 }
