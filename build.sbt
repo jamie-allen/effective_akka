@@ -9,11 +9,10 @@ credentials += Credentials(Path.userHome / "atmos.credentials")
 seq(ScctPlugin.instrumentSettings : _*)
 
 libraryDependencies ++= Seq(
-          "com.typesafe.akka" %% "akka-actor" % "2.1.0",
-          "com.typesafe.akka" %% "akka-slf4j" % "2.1.0",
+          "com.typesafe.akka" %% "akka-actor" % "2.1.2",
+          "com.typesafe.akka" %% "akka-slf4j" % "2.1.2",
+          "com.typesafe.akka" %% "akka-testkit" % "2.1.2" % "test",
           "ch.qos.logback" % "logback-classic" % "1.0.10",
-          "com.typesafe.akka" %% "akka-testkit" % "2.1.0" % "test",
-          "org.scalatest" %% "scalatest" % "1.9.1" % "test",
-          "junit" % "junit" % "4.7" % "test"
+				  "org.scalatest" %% "scalatest" % "2.0.M6-SNAP14" % "test"
 				  )
 

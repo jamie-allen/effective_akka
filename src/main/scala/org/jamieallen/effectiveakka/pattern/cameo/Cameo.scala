@@ -6,43 +6,49 @@ import scala.concurrent.duration._
 import akka.actor._
 import scala.math.BigDecimal.int2bigDecimal
 import org.jamieallen.effectiveakka.common._
+import akka.event.LoggingReceive
+
+object AccountBalanceResponseHandler {
+  case object AccountRetrievalTimeout
+}
 
 class AccountBalanceResponseHandler(savingsAccounts: ActorRef, checkingAccounts: ActorRef,
   moneyMarketAccounts: ActorRef, originalSender: ActorRef) extends Actor with ActorLogging {
 
-  val promisedResult = Promise[AccountBalances]()
+  import AccountBalanceResponseHandler._
   var checkingBalances, savingsBalances, mmBalances: Option[List[(Long, BigDecimal)]] = None
-  def receive = {
+  def receive = LoggingReceive {
     case CheckingAccountBalances(balances) =>
+      log.debug(s"Received checking account balances: $balances")
       checkingBalances = balances
       collectBalances
     case SavingsAccountBalances(balances) =>
+      log.debug(s"Received savings account balances: $balances")
       savingsBalances = balances
       collectBalances
     case MoneyMarketAccountBalances(balances) =>
+      log.debug(s"Received money market account balances: $balances")
       mmBalances = balances
       collectBalances
+    case AccountRetrievalTimeout =>
+      log.debug("Timeout occurred")
   }
 
   def collectBalances = (checkingBalances, savingsBalances, mmBalances) match {
     case (Some(c), Some(s), Some(m)) =>
       log.debug(s"Values received for all three account types")
-      if (promisedResult.trySuccess(AccountBalances(checkingBalances, savingsBalances, mmBalances)))
-        sendResponseAndShutdown
+      timeoutMessager.cancel
+      originalSender ! AccountBalances(checkingBalances, savingsBalances, mmBalances)
+      log.debug(s"Stopping context capturing actor")
+      context.stop(self)
     case _ =>
   }
 
-  def sendResponseAndShutdown = {
-    log.debug(s"Sending timeout failure back to original sender")
-    originalSender ! promisedResult.future
-    log.debug(s"Stopping context capturing actor")
-    context.system.stop(self)
-  }
-
   import context.dispatcher
-  context.system.scheduler.scheduleOnce(250 milliseconds) {
-    if (promisedResult.tryFailure(new TimeoutException))
-      sendResponseAndShutdown
+  val timeoutMessager = context.system.scheduler.scheduleOnce(250 milliseconds) {
+    originalSender ! AccountRetrievalTimeout
+    log.debug(s"Stopping context capturing actor")
+    context.stop(self)
   }
 }
 

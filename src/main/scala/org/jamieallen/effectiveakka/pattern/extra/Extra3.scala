@@ -27,7 +27,7 @@ class AccountBalanceRetriever3(savingsAccounts: ActorRef, checkingAccounts: Acto
           (checkingBalances, savingsBalances, mmBalances) match {
             case (Some(c), Some(s), Some(m)) =>
               originalSender ! AccountBalances(checkingBalances, savingsBalances, mmBalances)
-              context.system.stop(self)
+              context.stop(self)
             case _ =>
           }
 
