@@ -6,6 +6,7 @@ import org.scalatest.WordSpecLike
 import org.scalatest.matchers.MustMatchers
 import scala.concurrent.duration._
 import org.jamieallen.effectiveakka.common._
+import org.jamieallen.effectiveakka.pattern.cameo.AccountBalanceResponseHandler._
 
 class CameoSpec extends TestKit(ActorSystem()) with ImplicitSender with WordSpecLike with MustMatchers {
   "An AccountBalanceRetriever" should {
@@ -30,7 +31,7 @@ class CameoSpec extends TestKit(ActorSystem()) with ImplicitSender with WordSpec
 
       val accountBalanceRetriever = system.actorOf(Props(new AccountBalanceRetriever(savingsAccountsProxy, checkingAccountsProxy, moneyMarketAccountsProxy)))
       accountBalanceRetriever.tell(GetCustomerAccountBalances(1L), probe.ref)
-      probe.expectMsgType[AccountBalanceResponseHandler.AccountRetrievalTimeout.type]
+      probe.expectMsgType[AccountRetrievalTimeout.type]
     }
   }
 }

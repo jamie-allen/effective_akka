@@ -6,6 +6,7 @@ import org.scalatest.WordSpecLike
 import org.scalatest.matchers.MustMatchers
 import scala.concurrent.duration._
 import org.jamieallen.effectiveakka.common._
+import org.jamieallen.effectiveakka.pattern.extra.AccountBalanceRetrieverFinal._
 
 class ExtraFinalSpec extends TestKit(ActorSystem("TestAS")) with ImplicitSender with WordSpecLike with MustMatchers {
   "An AccountBalanceRetriever" should {
@@ -29,7 +30,7 @@ class ExtraFinalSpec extends TestKit(ActorSystem("TestAS")) with ImplicitSender 
 
       val accountBalanceRetriever = system.actorOf(Props(new AccountBalanceRetrieverFinal(savingsAccountsProxy, checkingAccountsProxy, moneyMarketAccountsProxy)))
       accountBalanceRetriever.tell(GetCustomerAccountBalances(1L), probe.ref)
-      probe.expectMsgType[AccountBalanceRetrieverFinal.AccountRetrievalTimeout.type]
+      probe.expectMsgType[AccountRetrievalTimeout.type]
     }
   }
 }

@@ -26,7 +26,7 @@ class MoneyMarketAccountsProxyStub extends MoneyMarketAccountsProxy with ActorLo
 }
 
 class TimingOutSavingsAccountProxyStub extends SavingsAccountsProxy with ActorLogging {
-  def receive = {
+  def receive = LoggingReceive {
     case GetCustomerAccountBalances(id: Long) =>
       log.debug(s"Forcing timeout")
       Thread.sleep(1000)
