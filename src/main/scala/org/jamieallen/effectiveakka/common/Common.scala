@@ -15,24 +15,6 @@ case class SavingsAccountBalances(
 case class MoneyMarketAccountBalances(
   balances: Option[List[(Long, BigDecimal)]])
 
-class SavingsAccountProxy extends Actor with ActorLogging {
-  def receive = LoggingReceive {
-    case GetCustomerAccountBalances(id: Long) =>
-      log.debug(s"Received GetCustomerAccountBalances for ID: $id")
-      sender ! SavingsAccountBalances(Some(List((1, 150000), (2, 29000))))
-  }
-}
-class CheckingAccountProxy extends Actor with ActorLogging {
-  def receive = LoggingReceive {
-    case GetCustomerAccountBalances(id: Long) =>
-      log.debug(s"Received GetCustomerAccountBalances for ID: $id")
-      sender ! CheckingAccountBalances(Some(List((3, 15000))))
-  }
-}
-class MoneyMarketAccountsProxy extends Actor with ActorLogging {
-  def receive = LoggingReceive {
-    case GetCustomerAccountBalances(id: Long) =>
-      log.debug(s"Received GetCustomerAccountBalances for ID: $id")
-      sender ! MoneyMarketAccountBalances(Some(List()))
-  }
-}
+trait SavingsAccountsProxy extends Actor
+trait CheckingAccountsProxy extends Actor
+trait MoneyMarketAccountsProxy extends Actor
