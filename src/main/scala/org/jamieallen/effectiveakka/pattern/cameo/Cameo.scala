@@ -57,7 +57,7 @@ class AccountBalanceRetriever(savingsAccounts: ActorRef, checkingAccounts: Actor
   def receive = {
     case GetCustomerAccountBalances(id) =>
       val originalSender = sender
-      val handler = context.actorOf(Props(new AccountBalanceResponseHandler(savingsAccounts, checkingAccounts, moneyMarketAccounts, originalSender)))
+      val handler = context.actorOf(Props(new AccountBalanceResponseHandler(savingsAccounts, checkingAccounts, moneyMarketAccounts, originalSender)), "cameo-message-handler")
       savingsAccounts.tell(GetCustomerAccountBalances(id), handler)
       checkingAccounts.tell(GetCustomerAccountBalances(id), handler)
       moneyMarketAccounts.tell(GetCustomerAccountBalances(id), handler)

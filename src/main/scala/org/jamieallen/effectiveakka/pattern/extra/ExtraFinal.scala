@@ -13,7 +13,7 @@ object AccountBalanceRetrieverFinal {
 class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: ActorRef, moneyMarketAccounts: ActorRef) extends Actor with ActorLogging {
   import AccountBalanceRetrieverFinal._
 
-  def receive = {
+  def receive = LoggingReceive {
     case GetCustomerAccountBalances(id) => {
       log.debug(s"Received GetCustomerAccountBalances for ID: $id from $sender")
       val originalSender = sender

@@ -23,7 +23,7 @@
   	</encoder>
 	</appender>
 
-	<logger name = "akka.actor" level = "DEBUG" >
+	<logger name = "akka.actor" level = "INFO" >
   	<appender-ref ref = "FILE" />
   	<appender-ref ref = "STDOUT" />
 	</logger>
