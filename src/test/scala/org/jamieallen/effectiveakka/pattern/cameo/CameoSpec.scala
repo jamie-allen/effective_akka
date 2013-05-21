@@ -42,7 +42,7 @@ class CameoSpec extends TestKit(ActorSystem("CameoTestAS")) with ImplicitSender 
 
       within(250 milliseconds, 500 milliseconds) {
         probe.send(accountBalanceRetriever, GetCustomerAccountBalances(1L))
-        probe.expectMsgType[AccountRetrievalTimeout.type]
+        probe.expectMsg(AccountRetrievalTimeout)
       }
     }
   }

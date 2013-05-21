@@ -39,7 +39,7 @@ class ExtraFinalSpec extends TestKit(ActorSystem("ExtraTestAS")) with ImplicitSe
 
       within(250 milliseconds, 500 milliseconds) {
         probe.send(accountBalanceRetriever, GetCustomerAccountBalances(1L))
-        probe.expectMsgType[AccountRetrievalTimeout.type]
+        probe.expectMsg(AccountRetrievalTimeout)
       }
     }
   }
