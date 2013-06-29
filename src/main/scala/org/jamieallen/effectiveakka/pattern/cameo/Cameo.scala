@@ -8,6 +8,12 @@ import akka.event.LoggingReceive
 
 object AccountBalanceResponseHandler {
   case object AccountRetrievalTimeout
+
+  def apply(savingsAccounts: ActorRef, checkingAccounts: ActorRef,
+    moneyMarketAccounts: ActorRef, originalSender: ActorRef): Props = {
+    Props(new AccountBalanceResponseHandler(savingsAccounts, checkingAccounts,
+      moneyMarketAccounts, originalSender))
+  }
 }
 
 class AccountBalanceResponseHandler(savingsAccounts: ActorRef, checkingAccounts: ActorRef,
@@ -57,7 +63,7 @@ class AccountBalanceRetriever(savingsAccounts: ActorRef, checkingAccounts: Actor
   def receive = {
     case GetCustomerAccountBalances(id) =>
       val originalSender = sender
-      val handler = context.actorOf(Props(new AccountBalanceResponseHandler(savingsAccounts, checkingAccounts, moneyMarketAccounts, originalSender)), "cameo-message-handler")
+      val handler = context.actorOf(AccountBalanceResponseHandler(savingsAccounts, checkingAccounts, moneyMarketAccounts, originalSender), "cameo-message-handler")
       savingsAccounts.tell(GetCustomerAccountBalances(id), handler)
       checkingAccounts.tell(GetCustomerAccountBalances(id), handler)
       moneyMarketAccounts.tell(GetCustomerAccountBalances(id), handler)
