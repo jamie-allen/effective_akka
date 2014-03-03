@@ -6,27 +6,6 @@ import org.jamieallen.effectiveakka.common._
 import akka.actor._
 import akka.event.LoggingReceive
 
-class Worker extends Actor {
-  def receive = {
-    case s: Seq[Int] => sender ! s.reduce(_ + _)
-  }
-}
-
-class Delegator extends Actor {
-  val worker = context.actorOf(Props[Worker])
-  def receive = {
-    case _ =>
-      val responseHandler = context.actorOf(Props(new Actor() {
-        def receive = {
-          case x =>
-            println("Got value: %d".format(x))
-            context.stop(self)
-        }
-      }))
-      worker.tell((1 to 100), responseHandler)
-  }
-}
-
 object AccountBalanceResponseHandler {
   case object AccountRetrievalTimeout
 
@@ -75,9 +54,8 @@ class AccountBalanceResponseHandler(savingsAccounts: ActorRef, checkingAccounts:
   }
 
   import context.dispatcher
-  val timeoutMessager = context.system.scheduler.scheduleOnce(250 milliseconds) {
-    self ! AccountRetrievalTimeout
-  }
+  val timeoutMessager = context.system.scheduler.scheduleOnce(
+    250 milliseconds, self, AccountRetrievalTimeout)
 }
 
 class AccountBalanceRetriever(savingsAccounts: ActorRef, checkingAccounts: ActorRef, moneyMarketAccounts: ActorRef) extends Actor {

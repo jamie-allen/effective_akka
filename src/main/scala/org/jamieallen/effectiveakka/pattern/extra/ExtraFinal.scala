@@ -56,9 +56,7 @@ class AccountBalanceRetrieverFinal(savingsAccounts: ActorRef, checkingAccounts: 
         moneyMarketAccounts ! GetCustomerAccountBalances(id)
 
         import context.dispatcher
-        val timeoutMessager = context.system.scheduler.scheduleOnce(250 milliseconds) {
-          self ! AccountRetrievalTimeout
-        }
+        val timeoutMessager = context.system.scheduler.scheduleOnce(250 milliseconds, self, AccountRetrievalTimeout)
       }))
     }
   }
