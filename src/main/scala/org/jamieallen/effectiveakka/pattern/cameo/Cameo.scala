@@ -1,9 +1,14 @@
 package org.jamieallen.effectiveakka.pattern.cameo
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.duration._
+import scala.concurrent.duration.DurationInt
+
 import org.jamieallen.effectiveakka.common._
-import akka.actor._
+
+import akka.actor.Actor
+import akka.actor.ActorLogging
+import akka.actor.ActorRef
+import akka.actor.Props
+import akka.actor.actorRef2Scala
 import akka.event.LoggingReceive
 
 object AccountBalanceResponseHandler {
